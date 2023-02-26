@@ -11,6 +11,13 @@ Although one would think this would fix the issue, it doesn't, it only makes it 
 
 <br><br>
 
+### This mod's source code is available on [My GitHub](https://github.com/AzumattDev/ResourceUnloadOptimizer)
+
+
+<br><br>
+
+
+
 `Feel free to reach out to me on discord if you need manual download assistance.`
 
 
