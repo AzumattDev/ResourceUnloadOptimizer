@@ -103,6 +103,9 @@
         <Content Include=".gitignore" />
         <Content Include="LICENSE.txt" />
         <Content Include="README.md" />
+        <Content Include="Thunderstore\icon.png" />
+        <Content Include="Thunderstore\manifest.json" />
+        <Content Include="Thunderstore\README.md" />
         <Content Include="UpdateManifest.ps1" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -134,9 +137,9 @@
     </Target>
     <Target Name="Copy" AfterTargets="GetAssemblyVersion">
         <Exec Command="copy /Y &quot;$(TargetDir)$(AssemblyName).dll&quot; &quot;C:\Users\crypt\AppData\Roaming\r2modmanPlus-local\Valheim\profiles\PTB\BepInEx\plugins\$(AssemblyName).dll&quot;" />
-       <!-- <Exec Command="copy /Y &quot;README.md&quot; &quot;Thunderstore\README.md&quot;" />-->
+        <Exec Command="copy /Y &quot;README.md&quot; &quot;Thunderstore\README.md&quot;" />
     </Target>
-    <!--<Target Name="UpdateManifestVersion" AfterTargets="Copy">
+    <Target Name="UpdateManifestVersion" AfterTargets="Copy">
         <ItemGroup>
             <ManifestFile Include="$(ProjectDir)Thunderstore\manifest.json" />
         </ItemGroup>
@@ -164,6 +167,6 @@
         <Copy SourceFiles="@(NexusPackageFiles)" DestinationFolder="$(PackageDir)" />
         <ZipDirectory SourceDirectory="$(PackageDir)" DestinationFile="Nexus\$(PackageName).zip" Overwrite="true" />
         <RemoveDir Directories="$(PackageDir)" />
-    </Target>-->
+    </Target>
 
 </Project>
