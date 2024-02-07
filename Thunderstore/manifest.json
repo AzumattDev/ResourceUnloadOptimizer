@@ -1,9 +1,9 @@
 {
   "name": "ResourceUnloadOptimizer",
-  "version_number": "1.0.2",
+  "version_number": "1.0.3",
   "website_url": "https://github.com/AzumattDev/ResourceUnloadOptimizer",
   "description": "Improves loading times and reduces or eliminates stutter in Valheim each time they use Resources.UnloadUnusedAssets and/or GC.Collect. As of Mistlands, the game began to stutter a lot more than it used to. This mod is an attempt at fixing this issue.",
   "dependencies": [
-    "denikson-BepInExPack_Valheim-5.4.2200"
+    "denikson-BepInExPack_Valheim-5.4.2202"
   ]
 }

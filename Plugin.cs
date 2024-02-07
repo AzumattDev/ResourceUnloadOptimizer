@@ -17,15 +17,13 @@ namespace ResourceUnloadOptimizer
     public class ResourceUnloadOptimizerPlugin : BaseUnityPlugin
     {
         internal const string ModName = "ResourceUnloadOptimizer";
-        internal const string ModVersion = "1.0.2";
+        internal const string ModVersion = "1.0.3";
         internal const string Author = "Azumatt";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
         private readonly Harmony _harmony = new(ModGUID);
-
-        public static readonly ManualLogSource ResourceUnloadOptimizerLogger =
-            BepInEx.Logging.Logger.CreateLogSource(ModName);
+        public static readonly ManualLogSource ResourceUnloadOptimizerLogger = BepInEx.Logging.Logger.CreateLogSource(ModName);
         
         private static AsyncOperation _currentOperation;
         private static Func<AsyncOperation> _originalUnload;
