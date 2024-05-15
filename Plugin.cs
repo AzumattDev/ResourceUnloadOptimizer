@@ -10,6 +10,7 @@ using HarmonyLib;
 using JetBrains.Annotations;
 using UnityEngine;
 using MonoMod.RuntimeDetour;
+using UnityEngine.Rendering;
 
 namespace ResourceUnloadOptimizer
 {
@@ -17,14 +18,14 @@ namespace ResourceUnloadOptimizer
     public class ResourceUnloadOptimizerPlugin : BaseUnityPlugin
     {
         internal const string ModName = "ResourceUnloadOptimizer";
-        internal const string ModVersion = "1.0.3";
+        internal const string ModVersion = "1.0.4";
         internal const string Author = "Azumatt";
         private const string ModGUID = Author + "." + ModName;
         private static string ConfigFileName = ModGUID + ".cfg";
         private static string ConfigFileFullPath = Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
         private readonly Harmony _harmony = new(ModGUID);
         public static readonly ManualLogSource ResourceUnloadOptimizerLogger = BepInEx.Logging.Logger.CreateLogSource(ModName);
-        
+
         private static AsyncOperation _currentOperation;
         private static Func<AsyncOperation> _originalUnload;
 
@@ -39,10 +40,16 @@ namespace ResourceUnloadOptimizer
 
         public void Awake()
         {
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+            {
+                ResourceUnloadOptimizerLogger.LogWarning("This plugin is not fully designed or beneficial on a server. Please install only on the client. Not patching any code.");
+                return;
+            }
+
             DisableUnload = config("1 - General", "DisableUnload", Toggle.Off, "Disable the unloading of all resources. Requires large amounts of RAM or will likely crash your game. NOT RECOMMENDED FOR NORMAL USE.");
             OptimizeMemoryUsage = config("1 - General", "OptimizeMemoryUsage", Toggle.On, "Use more memory (if available) in order to load the game faster and reduce random stuttering.");
             PercentMemoryThreshold = config("1 - General", "PercentMemoryThreshold", 75, "Minimum amount of memory to be used before resource unloading will run.");
-            
+
             InstallHooks();
             StartCoroutine(CleanupCo());
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -54,14 +61,13 @@ namespace ResourceUnloadOptimizer
         {
             var target = AccessTools.Method(typeof(Resources), nameof(Resources.UnloadUnusedAssets));
             var replacement = AccessTools.Method(typeof(Hooks), nameof(Hooks.UnloadUnusedAssetsHook));
-            
+
             var detour = new NativeDetour(target, replacement);
             detour.Apply();
-            
+
             _originalUnload = detour.GenerateTrampoline<Func<AsyncOperation>>();
-            
         }
-        
+
         private IEnumerator CleanupCo()
         {
             while (true)
@@ -78,7 +84,7 @@ namespace ResourceUnloadOptimizer
                 }
             }
         }
-        
+
         private static AsyncOperation RunUnloadAssets()
         {
             // Only allow a single unload operation to run at one time
@@ -87,6 +93,7 @@ namespace ResourceUnloadOptimizer
                 ResourceUnloadOptimizerLogger.LogDebug("Starting unused asset cleanup");
                 _currentOperation = _originalUnload();
             }
+
             return _currentOperation;
         }
 
@@ -133,7 +140,7 @@ namespace ResourceUnloadOptimizer
             // Replacement method needs to be inside a static class to be used in NativeDetour
             public static AsyncOperation UnloadUnusedAssetsHook()
             {
-                return DisableUnload.Value  == Toggle.On ? null : RunUnloadAssets();
+                return DisableUnload.Value == Toggle.On ? null : RunUnloadAssets();
             }
         }
 
